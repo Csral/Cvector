@@ -7,7 +7,7 @@ languages.
 
 Thus, CVector allows an array of non-fixed size to exist using dynamic
 memory management. However, note that not all functions would work in the
-same way as C++'s vectors. C doesn't have (Object-Oriented Programming)[https://www.geeksforgeeks.org/introduction-of-object-oriented-programming/] capabilities and hence structures
+same way as C++'s vectors. C doesn't have [Object-Oriented Programming](https://www.geeksforgeeks.org/introduction-of-object-oriented-programming/) capabilities and hence structures
 were used to emulate an object-oriented feel in this project.
 
 Modification and understanding of source code requires the following:
