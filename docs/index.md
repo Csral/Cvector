@@ -13,7 +13,7 @@ were used to emulate an object-oriented feel in this project.
 Modification and understanding of source code requires the following:
 * Knowledge on C programming language
 * Understanding of pointers
-* Basic pointer athematic
+* Basic pointer arithmetic
 
 To start, download and include the header file in your source code.
 
