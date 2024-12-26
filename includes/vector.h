@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <setjmp.h>
 #include <string.h>
+#include <math.h>
 
 // ------------------------------------------------------- ERRORS ------------------------------------------------------------- //
 
@@ -41,6 +42,11 @@ typedef struct intVector {
     long int (*size)(intVector* vec);
     void (*insert)(intVector* vec, long int pos, int value);
     void (*erase)(intVector* vec, long int pos);
+    void (*clear)(intVector* vec);
+    long int (*count)(intVector* vec, int searcher);
+    int* (*getData)(intVector* vec);
+    void (*reverse)(intVector* vec);
+    long int (*find)(intVector* vec, int finder);
 
 };
 
@@ -56,6 +62,11 @@ typedef struct floatVector {
     long int (*size)(floatVector* vec);
     void (*insert)(floatVector* vec, long int pos, float value);
     void (*erase)(floatVector* vec, long int pos);
+    void (*clear)(floatVector* vec);
+    long int (*count)(floatVector* vec, float searcher);
+    float* (*getData)(floatVector* vec);
+    void (*reverse)(floatVector* vec);
+    long int (*find)(floatVector* vec, float finder);
 
 };
 
@@ -71,6 +82,11 @@ typedef struct doubleVector {
     long int (*size)(doubleVector* vec);
     void (*insert)(doubleVector* vec, long int pos, double value);
     void (*erase)(doubleVector* vec, long int pos);
+    void (*clear)(doubleVector* vec);
+    long int (*count)(doubleVector* vec, double searcher);
+    double* (*getData)(doubleVector* vec);
+    void (*reverse)(doubleVector* vec);
+    long int (*find)(doubleVector* vec, double finder);
 
 };
 
@@ -86,6 +102,11 @@ typedef struct charVector {
     long int (*size)(charVector* vec);
     void (*insert)(charVector* vec, long int pos, char value);
     void (*erase)(charVector* vec, long int pos);
+    void (*clear)(charVector* vec);
+    long int (*count)(charVector* vec, char searcher);
+    char* (*getData)(charVector* vec);
+    void (*reverse)(charVector* vec);
+    long int (*find)(charVector* vec, char finder);
 
 };
 
@@ -101,6 +122,11 @@ typedef struct stringVector {
     long int (*size)(stringVector* vec);
     void (*insert)(stringVector* vec, long int pos, char* value);
     void (*erase)(stringVector* vec, long int pos);
+    void (*clear)(stringVector* vec);
+    long int (*count)(stringVector* vec, char* searcher);
+    char** (*getData)(stringVector* vec);
+    void (*reverse)(stringVector* vec);
+    long int (*find)(stringVector* vec, char* finder);
 
 };
 
@@ -793,6 +819,112 @@ void string_erase(stringVector* vec, long int pos) {
 
 };
 
+// -------------------------------------------------------- CLEAR -------------------------------------------------------------------- //
+
+void int_clear(intVector* v1) {
+
+    v1->base.size = 0;
+
+};
+
+void float_clear(floatVector* v1) {
+
+    v1->base.size = 0;
+
+};
+
+void double_clear(doubleVector* v1) {
+
+    v1->base.size = 0;
+
+};
+
+void char_clear(charVector* v1) {
+
+    v1->base.size = 0;
+
+};
+
+void string_clear(stringVector* v1) {
+
+    v1->base.size = 0;
+
+};
+
+// -------------------------------------------------------- COUNT  ----------------------------------------------------------------- //
+
+long int int_count(intVector* v1, int searcher) {
+
+    long int count = 0;
+
+    for (long int i = 0; i < v1->size(v1); i++) {
+
+        if (searcher == v1->at(v1,i)) count++;
+
+    };
+
+    return count;
+
+};
+
+long int float_count(floatVector* v1, float searcher) {
+
+    long int count = 0;
+    const float EPSILON = 1e-6;
+
+    for (long int i = 0; i < v1->size(v1); i++) {
+
+        if (fabs(v1->at(v1, i) - searcher) < EPSILON) count++;
+
+    };
+
+    return count;
+
+};
+
+long int double_count(doubleVector* v1, double searcher) {
+
+    long int count = 0;
+    const float EPSILON = 1e-10;
+
+    for (long int i = 0; i < v1->size(v1); i++) {
+
+        if (fabs(v1->at(v1, i) - searcher) < EPSILON) count++;
+
+    };
+
+    return count;
+
+};
+
+long int char_count(charVector* v1, char searcher) {
+
+    long int count = 0;
+
+    for (long int i = 0; i < v1->size(v1); i++) {
+
+        if (searcher == v1->at(v1,i)) count++;
+
+    };
+
+    return count;
+
+};
+
+long int string_count(stringVector* v1, char* searcher) {
+
+    long int count = 0;
+
+    for (long int i = 0; i < v1->size(v1); i++) {
+
+        if (strcmp(v1->at(v1,i), searcher) == 0) count++;
+
+    };
+
+    return count;
+
+};
+
 // -------------------------------------------------------- SIZE -------------------------------------------------------------------- //
 
 long int int_size(intVector* v1) {
@@ -825,7 +957,264 @@ long int string_size(stringVector* v1) {
     
 };
 
-// -------------------------------------------------------- INIT -------------------------------------------------------------------- //
+// -------------------------------------------------------- FIND -------------------------------------------------------------------- //
+
+long int int_find(intVector* v1, int finder) {
+
+    for (long int i = 0; i < v1->size(v1); i++ ) if (v1->at(v1,i) == finder) return i;
+
+    return -1; //* Not found;
+
+};
+
+long int float_find(floatVector* v1, float finder) {
+    
+    const float EPSILON = 1e-6;
+
+    for (long int i = 0; i < v1->size(v1); i++ ) if (fabs(v1->at(v1, i) - finder) < EPSILON) return i;
+
+    return -1; //* Not found;
+
+};
+
+long int double_find(doubleVector* v1, double finder) {
+
+    const float EPSILON = 1e-10;
+
+    for (long int i = 0; i < v1->size(v1); i++ ) if (fabs(v1->at(v1, i) - finder) < EPSILON) return i;
+
+    return -1; //* Not found;
+
+};
+
+long int char_find(charVector* v1, char finder) {
+
+    for (long int i = 0; i < v1->size(v1); i++ ) if (v1->at(v1,i) == finder) return i;
+
+    return -1; //* Not found;
+
+};
+
+long int string_find(stringVector* v1, char* finder) {
+
+    for (long int i = 0; i < v1->size(v1); i++ ) if (strcmp(v1->at(v1,i), finder) == 0) return i;
+
+    return -1; //* Not found;
+
+};
+
+// -------------------------------------------------------- SWAP -------------------------------------------------------------------- //
+
+void int_swap(intVector* v1, intVector* v2) {
+
+    // todo -> Make a reallocator so that we can ensure both v1 and v2 are max size.
+    // todo -> Make a fix allocator which will set limit a bit closer to the size.
+
+    long int maxSize = 10;
+
+    if (v1->size(v1) > v2->size(v2)) maxSize = v1->size(v1);
+    else maxSize = v2->size(v2);
+
+    vectorBase tempBase = v1->base;
+    int* tempData = v1->data;
+
+    v1->base = v2->base;
+    v1->data = v2->data;
+
+    v2->base = tempBase;
+    v2->data = tempData;
+
+};
+
+void float_swap(floatVector* v1, floatVector* v2) {
+
+    // todo -> Make a reallocator so that we can ensure both v1 and v2 are max size.
+    // todo -> Make a fix allocator which will set limit a bit closer to the size.
+
+    long int maxSize = 10;
+
+    if (v1->size(v1) > v2->size(v2)) maxSize = v1->size(v1);
+    else maxSize = v2->size(v2);
+
+    vectorBase tempBase = v1->base;
+    float* tempData = v1->data;
+
+    v1->base = v2->base;
+    v1->data = v2->data;
+
+    v2->base = tempBase;
+    v2->data = tempData;
+
+};
+
+void double_swap(doubleVector* v1, doubleVector* v2) {
+
+    // todo -> Make a reallocator so that we can ensure both v1 and v2 are max size.
+    // todo -> Make a fix allocator which will set limit a bit closer to the size.
+
+    long int maxSize = 10;
+
+    if (v1->size(v1) > v2->size(v2)) maxSize = v1->size(v1);
+    else maxSize = v2->size(v2);
+
+    vectorBase tempBase = v1->base;
+    double* tempData = v1->data;
+
+    v1->base = v2->base;
+    v1->data = v2->data;
+
+    v2->base = tempBase;
+    v2->data = tempData;
+
+};
+
+void char_swap(charVector* v1, charVector* v2) {
+
+    // todo -> Make a reallocator so that we can ensure both v1 and v2 are max size.
+    // todo -> Make a fix allocator which will set limit a bit closer to the size.
+
+    long int maxSize = 10;
+
+    if (v1->size(v1) > v2->size(v2)) maxSize = v1->size(v1);
+    else maxSize = v2->size(v2);
+
+    vectorBase tempBase = v1->base;
+    char* tempData = v1->data;
+
+    v1->base = v2->base;
+    v1->data = v2->data;
+
+    v2->base = tempBase;
+    v2->data = tempData;
+
+};
+
+void string_swap(stringVector* v1, stringVector* v2) {
+
+    // todo -> Make a reallocator so that we can ensure both v1 and v2 are max size.
+    // todo -> Make a fix allocator which will set limit a bit closer to the size.
+
+    long int maxSize = 10;
+
+    if (v1->size(v1) > v2->size(v2)) maxSize = v1->size(v1);
+    else maxSize = v2->size(v2);
+
+    vectorBase tempBase = v1->base;
+    char** tempData = v1->data;
+
+    v1->base = v2->base;
+    v1->data = v2->data;
+
+    v2->base = tempBase;
+    v2->data = tempData;
+
+};
+
+// ------------------------------------------------------- DATA ---------------------------------------------------------------- //
+
+int* int_data(intVector* v1) {
+
+    return v1->data;
+    
+};
+
+float* float_data(floatVector* v1) {
+
+    return v1->data;
+    
+};
+
+double* double_data(doubleVector* v1) {
+
+    return v1->data;
+    
+};
+
+char* char_data(charVector* v1) {
+
+    return v1->data;
+    
+};
+
+char** string_data(stringVector* v1) {
+
+    return v1->data;
+    
+};
+
+// ------------------------------------------------------- REVERSE ---------------------------------------------------------------- //
+
+void int_reverse(intVector* v1) {
+
+    long int size = v1->size(v1);
+
+    for (int i = 0; i < size / 2; i++) {
+
+        int temp = v1->data[i];
+        v1->data[i] = v1->data[v1->base.size-1-i];
+        v1->data[v1->base.size-1-i] = temp;
+
+    };
+
+}
+
+void float_reverse(floatVector* v1) {
+
+    long int size = v1->size(v1);
+
+    for (int i = 0; i < size / 2; i++) {
+
+        float temp = v1->data[i];
+        v1->data[i] = v1->data[v1->base.size-1-i];
+        v1->data[v1->base.size-1-i] = temp;
+
+    };
+
+}
+
+void double_reverse(doubleVector* v1) {
+
+    long int size = v1->size(v1);
+
+    for (int i = 0; i < size / 2; i++) {
+
+        double temp = v1->data[i];
+        v1->data[i] = v1->data[v1->base.size-1-i];
+        v1->data[v1->base.size-1-i] = temp;
+
+    };
+
+}
+
+void char_reverse(charVector* v1) {
+
+    long int size = v1->size(v1);
+
+    for (int i = 0; i < size / 2; i++) {
+
+        char temp = v1->data[i];
+        v1->data[i] = v1->data[v1->base.size-1-i];
+        v1->data[v1->base.size-1-i] = temp;
+
+    };
+
+}
+
+void string_reverse(stringVector* v1) {
+
+    long int size = v1->size(v1);
+
+    for (int i = 0; i < size / 2; i++) {
+
+        char* temp = v1->data[i];
+        v1->data[i] = v1->data[v1->base.size-1-i];
+        v1->data[v1->base.size-1-i] = temp;
+
+    };
+
+}
+
+// -------------------------------------------------------- INIT ------------------------------------------------------------------ //
 
 void* int_init(intVector* v1, long int limit) {
 
@@ -849,6 +1238,11 @@ void* int_init(intVector* v1, long int limit) {
     v1->size = &int_size;
     v1->insert = &int_insert;
     v1->erase = &int_erase;
+    v1->clear = &int_clear;
+    v1->count = &int_count;
+    v1->getData = &int_data;
+    v1->reverse = &int_reverse;
+    v1->find = &int_find;
 
 };
 
@@ -874,6 +1268,11 @@ void* float_init(floatVector* v1, long int limit) {
     v1->size = &float_size;
     v1->insert = &float_insert;
     v1->erase = &float_erase;
+    v1->clear = &float_clear;
+    v1->count = &float_count;
+    v1->getData = &float_data;
+    v1->reverse = &float_reverse;
+    v1->find = &float_find;
 
 };
 
@@ -899,6 +1298,11 @@ void* double_init(doubleVector* v1, long int limit) {
     v1->size = &double_size;
     v1->insert = &double_insert;
     v1->erase = &double_erase;
+    v1->clear = &double_clear;
+    v1->count = &double_count;
+    v1->getData = &double_data;
+    v1->reverse = &double_reverse;
+    v1->find = &double_find;
 
 };
 
@@ -924,6 +1328,11 @@ void* char_init(charVector* v1, long int limit) {
     v1->size = &char_size;
     v1->insert = &char_insert;
     v1->erase = &char_erase;
+    v1->clear = &char_clear;
+    v1->count = &char_count;
+    v1->getData = &char_data;
+    v1->reverse = &char_reverse;
+    v1->find = &char_find;
 
 };
 
@@ -949,5 +1358,10 @@ void* string_init(stringVector* v1, long int limit) {
     v1->size = &string_size;
     v1->insert = &string_insert;
     v1->erase = &string_erase;
+    v1->clear = &string_clear;
+    v1->count = &string_count;
+    v1->getData = &string_data;
+    v1->reverse = &string_reverse;
+    v1->find = &string_find;
 
 };
