@@ -30,7 +30,14 @@ struct vector_base {
 
 typedef struct vector_base vectorBase;
 
-typedef struct intVector {
+typedef struct intvector intVector;
+typedef struct floatvector floatVector;
+typedef struct doublevector doubleVector;
+typedef struct charvector charVector;
+typedef struct stringvector stringVector;
+
+
+struct intvector {
 
     vectorBase base;
     int* data;
@@ -50,7 +57,7 @@ typedef struct intVector {
 
 };
 
-typedef struct floatVector {
+struct floatvector {
 
     vectorBase base;
     float* data;
@@ -70,7 +77,7 @@ typedef struct floatVector {
 
 };
 
-typedef struct doubleVector {
+struct doublevector {
 
     vectorBase base;
     double* data;
@@ -90,7 +97,7 @@ typedef struct doubleVector {
 
 };
 
-typedef struct charVector {
+struct charvector {
 
     vectorBase base;
     char* data;
@@ -110,7 +117,7 @@ typedef struct charVector {
 
 };
 
-typedef struct stringVector {
+struct stringvector {
 
     vectorBase base;
     char** data;
@@ -195,6 +202,7 @@ void int_push_back(intVector* vec, int value) {
     vec->data[vec->base.size] = value;
 
     vec->base.size += 1;
+    printf("Base size: %d\n", vec->base.size);
 
 };
 
@@ -310,31 +318,31 @@ char* string_front(stringVector* vec) {
 
 int int_back(intVector* vec) {
 
-    return vec->data[vec->base.size];
+    return vec->data[vec->base.size-1];
 
 };
 
 float float_back(floatVector* vec) {
 
-    return vec->data[vec->base.size];
+    return vec->data[vec->base.size-1];
 
 };
 
 double double_back(doubleVector* vec) {
 
-    return vec->data[vec->base.size];
+    return vec->data[vec->base.size-1];
 
 };
 
 char char_back(charVector* vec) {
 
-    return vec->data[vec->base.size];
+    return vec->data[vec->base.size-1];
 
 };
 
 char* string_back(stringVector* vec) {
 
-    return vec->data[vec->base.size];
+    return vec->data[vec->base.size-1];
 
 };
 
@@ -929,31 +937,31 @@ long int string_count(stringVector* v1, char* searcher) {
 
 long int int_size(intVector* v1) {
 
-    return (v1->base.size+1);
+    return (v1->base.size);
 
 };
 
 long int float_size(floatVector* v1) {
 
-    return (v1->base.size+1);
+    return (v1->base.size);
     
 };
 
 long int double_size(doubleVector* v1) {
 
-    return (v1->base.size+1);
+    return (v1->base.size);
     
 };
 
 long int char_size(charVector* v1) {
 
-    return (v1->base.size+1);
+    return (v1->base.size);
     
 };
 
 long int string_size(stringVector* v1) {
 
-    return (v1->base.size+1);
+    return (v1->base.size);
     
 };
 
