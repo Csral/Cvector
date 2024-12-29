@@ -35,12 +35,54 @@ typedef struct floatvector floatVector;
 typedef struct doublevector doubleVector;
 typedef struct charvector charVector;
 typedef struct stringvector stringVector;
+typedef struct cintvector cintVector;
+typedef struct cfloatvector cfloatVector;
+typedef struct cdoublevector cdoubleVector;
+typedef struct ccharvector ccharVector;
+typedef struct cstringvector cstringVector;
 
+// ------------------------------------------------------ NON CLASS ---------------------------------------------------------------- //
 
 struct intvector {
 
     vectorBase base;
     int* data;
+
+};
+
+struct floatvector {
+
+    vectorBase base;
+    float* data;
+
+};
+
+struct doublevector {
+
+    vectorBase base;
+    double* data;
+
+};
+
+struct charvector {
+
+    vectorBase base;
+    char* data;
+
+};
+
+struct stringvector {
+
+    vectorBase base;
+    char** data;
+
+};
+
+// -------------------------------------------------------- CLASS ------------------------------------------------------------------ //
+
+struct cintvector {
+
+    intVector main;
     void (*push_back)(intVector* vec, int value);
     void (*pop_back)(intVector* vec);
     int (*at)(intVector* vec, long int pos);
@@ -57,10 +99,9 @@ struct intvector {
 
 };
 
-struct floatvector {
+struct cfloatvector {
 
-    vectorBase base;
-    float* data;
+    floatVector main;
     void (*push_back)(floatVector* vec, float value);
     void (*pop_back)(floatVector* vec);
     float (*at)(floatVector* vec, long int pos);
@@ -77,10 +118,9 @@ struct floatvector {
 
 };
 
-struct doublevector {
+struct cdoublevector {
 
-    vectorBase base;
-    double* data;
+    doubleVector main;
     void (*push_back)(doubleVector* vec, double value);
     void (*pop_back)(doubleVector* vec);
     double (*at)(doubleVector* vec, long int pos);
@@ -97,10 +137,9 @@ struct doublevector {
 
 };
 
-struct charvector {
+struct ccharvector {
 
-    vectorBase base;
-    char* data;
+    charVector main;
     void (*push_back)(charVector* vec, char value);
     void (*pop_back)(charVector* vec);
     char (*at)(charVector* vec, long int pos);
@@ -117,10 +156,9 @@ struct charvector {
 
 };
 
-struct stringvector {
+struct cstringvector {
 
-    vectorBase base;
-    char** data;
+    stringVector main;
     void (*push_back)(stringVector* vec, char* value);
     void (*pop_back)(stringVector* vec);
     char* (*at)(stringVector* vec, long int pos);
@@ -468,7 +506,7 @@ void int_insert(intVector* v1, long int pos, int value) {
 
         if (pos < 0) {
 
-            pos += v1->size(v1);
+            pos += v1->base.size;
 
         };
 
@@ -490,14 +528,14 @@ void int_insert(intVector* v1, long int pos, int value) {
             }
         }
 
-        if (pos > v1->size(v1)) {
+        if (pos > v1->base.size) {
             char msg[100];
             snprintf(msg, sizeof(msg), "Specified index %ld out of range to insert an element!\n", pos);
             err_handler(msg);
         } else {
 
             
-            for (int i = v1->size(v1); i > pos; i--) {
+            for (int i = v1->base.size; i > pos; i--) {
                 v1->data[i] = v1->data[i-1];
             };
 
@@ -519,7 +557,7 @@ void float_insert(floatVector* v1, long int pos, float value) {
 
         if (pos < 0) {
 
-            pos += v1->size(v1);
+            pos += v1->base.size;
 
         };
 
@@ -541,14 +579,14 @@ void float_insert(floatVector* v1, long int pos, float value) {
             }
         }
 
-        if (pos > v1->size(v1)) {
+        if (pos > v1->base.size) {
             char msg[100];
             snprintf(msg, sizeof(msg), "Specified index %ld out of range to insert an element!\n", pos);
             err_handler(msg);
         } else {
 
             
-            for (int i = v1->size(v1); i > pos; i--) {
+            for (int i = v1->base.size; i > pos; i--) {
                 v1->data[i] = v1->data[i-1];
             };
 
@@ -570,7 +608,7 @@ void double_insert(doubleVector* v1, long int pos, double value) {
 
         if (pos < 0) {
 
-            pos += v1->size(v1);
+            pos += v1->base.size;
 
         };
 
@@ -592,14 +630,14 @@ void double_insert(doubleVector* v1, long int pos, double value) {
             }
         }
 
-        if (pos > v1->size(v1)) {
+        if (pos > v1->base.size) {
             char msg[100];
             snprintf(msg, sizeof(msg), "Specified index %ld out of range to insert an element!\n", pos);
             err_handler(msg);
         } else {
 
             
-            for (int i = v1->size(v1); i > pos; i--) {
+            for (int i = v1->base.size; i > pos; i--) {
                 v1->data[i] = v1->data[i-1];
             };
 
@@ -621,7 +659,7 @@ void char_insert(charVector* v1, long int pos, char value) {
 
         if (pos < 0) {
 
-            pos += v1->size(v1);
+            pos += v1->base.size;
 
         };
 
@@ -643,14 +681,14 @@ void char_insert(charVector* v1, long int pos, char value) {
             }
         }
 
-        if (pos > v1->size(v1)) {
+        if (pos > v1->base.size) {
             char msg[100];
             snprintf(msg, sizeof(msg), "Specified index %ld out of range to insert an element!\n", pos);
             err_handler(msg);
         } else {
 
             
-            for (int i = v1->size(v1); i > pos; i--) {
+            for (int i = v1->base.size; i > pos; i--) {
                 v1->data[i] = v1->data[i-1];
             };
 
@@ -672,7 +710,7 @@ void string_insert(stringVector* v1, long int pos, char* value) {
 
         if (pos < 0) {
 
-            pos += v1->size(v1);
+            pos += v1->base.size;
 
         };
 
@@ -694,14 +732,14 @@ void string_insert(stringVector* v1, long int pos, char* value) {
             }
         }
 
-        if (pos > v1->size(v1)) {
+        if (pos > v1->base.size) {
             char msg[100];
             snprintf(msg, sizeof(msg), "Specified index %ld out of range to insert an element!\n", pos);
             err_handler(msg);
         } else {
 
             
-            for (int i = v1->size(v1); i > pos; i--) {
+            for (int i = v1->base.size; i > pos; i--) {
                 v1->data[i] = v1->data[i-1];
             };
 
@@ -865,9 +903,9 @@ long int int_count(intVector* v1, int searcher) {
 
     long int count = 0;
 
-    for (long int i = 0; i < v1->size(v1); i++) {
+    for (long int i = 0; i < v1->base.size; i++) {
 
-        if (searcher == v1->at(v1,i)) count++;
+        if (searcher == v1->data[i]) count++;
 
     };
 
@@ -880,9 +918,9 @@ long int float_count(floatVector* v1, float searcher) {
     long int count = 0;
     const float EPSILON = 1e-6;
 
-    for (long int i = 0; i < v1->size(v1); i++) {
+    for (long int i = 0; i < v1->base.size; i++) {
 
-        if (fabs(v1->at(v1, i) - searcher) < EPSILON) count++;
+        if (fabs(v1->data[i] - searcher) < EPSILON) count++;
 
     };
 
@@ -895,9 +933,9 @@ long int double_count(doubleVector* v1, double searcher) {
     long int count = 0;
     const float EPSILON = 1e-10;
 
-    for (long int i = 0; i < v1->size(v1); i++) {
+    for (long int i = 0; i < v1->base.size; i++) {
 
-        if (fabs(v1->at(v1, i) - searcher) < EPSILON) count++;
+        if (fabs(v1->data[i] - searcher) < EPSILON) count++;
 
     };
 
@@ -909,9 +947,9 @@ long int char_count(charVector* v1, char searcher) {
 
     long int count = 0;
 
-    for (long int i = 0; i < v1->size(v1); i++) {
+    for (long int i = 0; i < v1->base.size; i++) {
 
-        if (searcher == v1->at(v1,i)) count++;
+        if (searcher == v1->data[i]) count++;
 
     };
 
@@ -923,9 +961,9 @@ long int string_count(stringVector* v1, char* searcher) {
 
     long int count = 0;
 
-    for (long int i = 0; i < v1->size(v1); i++) {
+    for (long int i = 0; i < v1->base.size; i++) {
 
-        if (strcmp(v1->at(v1,i), searcher) == 0) count++;
+        if (strcmp(v1->data[i], searcher) == 0) count++;
 
     };
 
@@ -969,7 +1007,7 @@ long int string_size(stringVector* v1) {
 
 long int int_find(intVector* v1, int finder) {
 
-    for (long int i = 0; i < v1->size(v1); i++ ) if (v1->at(v1,i) == finder) return i;
+    for (long int i = 0; i < v1->base.size; i++ ) if (v1->data[i] == finder) return i;
 
     return -1; //* Not found;
 
@@ -979,7 +1017,7 @@ long int float_find(floatVector* v1, float finder) {
     
     const float EPSILON = 1e-6;
 
-    for (long int i = 0; i < v1->size(v1); i++ ) if (fabs(v1->at(v1, i) - finder) < EPSILON) return i;
+    for (long int i = 0; i < v1->base.size; i++ ) if (fabs(v1->data[i] - finder) < EPSILON) return i;
 
     return -1; //* Not found;
 
@@ -989,7 +1027,7 @@ long int double_find(doubleVector* v1, double finder) {
 
     const float EPSILON = 1e-10;
 
-    for (long int i = 0; i < v1->size(v1); i++ ) if (fabs(v1->at(v1, i) - finder) < EPSILON) return i;
+    for (long int i = 0; i < v1->base.size; i++ ) if (fabs(v1->data[i] - finder) < EPSILON) return i;
 
     return -1; //* Not found;
 
@@ -997,7 +1035,7 @@ long int double_find(doubleVector* v1, double finder) {
 
 long int char_find(charVector* v1, char finder) {
 
-    for (long int i = 0; i < v1->size(v1); i++ ) if (v1->at(v1,i) == finder) return i;
+    for (long int i = 0; i < v1->base.size; i++ ) if (v1->data[i] == finder) return i;
 
     return -1; //* Not found;
 
@@ -1005,7 +1043,7 @@ long int char_find(charVector* v1, char finder) {
 
 long int string_find(stringVector* v1, char* finder) {
 
-    for (long int i = 0; i < v1->size(v1); i++ ) if (strcmp(v1->at(v1,i), finder) == 0) return i;
+    for (long int i = 0; i < v1->base.size; i++ ) if (strcmp(v1->data[i], finder) == 0) return i;
 
     return -1; //* Not found;
 
@@ -1020,8 +1058,8 @@ void int_swap(intVector* v1, intVector* v2) {
 
     long int maxSize = 10;
 
-    if (v1->size(v1) > v2->size(v2)) maxSize = v1->size(v1);
-    else maxSize = v2->size(v2);
+    if (v1->base.size > v2->base.size) maxSize = v1->base.size;
+    else maxSize = v2->base.size;
 
     vectorBase tempBase = v1->base;
     int* tempData = v1->data;
@@ -1041,8 +1079,8 @@ void float_swap(floatVector* v1, floatVector* v2) {
 
     long int maxSize = 10;
 
-    if (v1->size(v1) > v2->size(v2)) maxSize = v1->size(v1);
-    else maxSize = v2->size(v2);
+    if (v1->base.size > v2->base.size) maxSize = v1->base.size;
+    else maxSize = v2->base.size;
 
     vectorBase tempBase = v1->base;
     float* tempData = v1->data;
@@ -1062,8 +1100,8 @@ void double_swap(doubleVector* v1, doubleVector* v2) {
 
     long int maxSize = 10;
 
-    if (v1->size(v1) > v2->size(v2)) maxSize = v1->size(v1);
-    else maxSize = v2->size(v2);
+    if (v1->base.size > v2->base.size) maxSize = v1->base.size;
+    else maxSize = v2->base.size;
 
     vectorBase tempBase = v1->base;
     double* tempData = v1->data;
@@ -1083,8 +1121,8 @@ void char_swap(charVector* v1, charVector* v2) {
 
     long int maxSize = 10;
 
-    if (v1->size(v1) > v2->size(v2)) maxSize = v1->size(v1);
-    else maxSize = v2->size(v2);
+    if (v1->base.size > v2->base.size) maxSize = v1->base.size;
+    else maxSize = v2->base.size;
 
     vectorBase tempBase = v1->base;
     char* tempData = v1->data;
@@ -1104,8 +1142,8 @@ void string_swap(stringVector* v1, stringVector* v2) {
 
     long int maxSize = 10;
 
-    if (v1->size(v1) > v2->size(v2)) maxSize = v1->size(v1);
-    else maxSize = v2->size(v2);
+    if (v1->base.size > v2->base.size) maxSize = v1->base.size;
+    else maxSize = v2->base.size;
 
     vectorBase tempBase = v1->base;
     char** tempData = v1->data;
@@ -1154,7 +1192,7 @@ char** string_data(stringVector* v1) {
 
 void int_reverse(intVector* v1) {
 
-    long int size = v1->size(v1);
+    long int size = v1->base.size;
 
     for (int i = 0; i < size / 2; i++) {
 
@@ -1168,7 +1206,7 @@ void int_reverse(intVector* v1) {
 
 void float_reverse(floatVector* v1) {
 
-    long int size = v1->size(v1);
+    long int size = v1->base.size;
 
     for (int i = 0; i < size / 2; i++) {
 
@@ -1182,7 +1220,7 @@ void float_reverse(floatVector* v1) {
 
 void double_reverse(doubleVector* v1) {
 
-    long int size = v1->size(v1);
+    long int size = v1->base.size;
 
     for (int i = 0; i < size / 2; i++) {
 
@@ -1196,7 +1234,7 @@ void double_reverse(doubleVector* v1) {
 
 void char_reverse(charVector* v1) {
 
-    long int size = v1->size(v1);
+    long int size = v1->base.size;
 
     for (int i = 0; i < size / 2; i++) {
 
@@ -1210,7 +1248,7 @@ void char_reverse(charVector* v1) {
 
 void string_reverse(stringVector* v1) {
 
-    long int size = v1->size(v1);
+    long int size = v1->base.size;
 
     for (int i = 0; i < size / 2; i++) {
 
@@ -1238,6 +1276,88 @@ void* int_init(intVector* v1, long int limit) {
         exit(EXIT_FAILURE);
     };
 
+};
+
+void* float_init(floatVector* v1, long int limit) {
+
+    if (limit <= 0) limit = 5;
+
+    v1->base.size = 0;
+    v1->base.limit = limit;
+
+    v1->data = (float*)malloc(sizeof(float)*v1->base.limit);
+
+    if (v1->data == NULL) {
+        perror("Error allocating memory for vector: ");
+        exit(EXIT_FAILURE);
+    };
+
+};
+
+void* double_init(doubleVector* v1, long int limit) {
+
+    if (limit <= 0) limit = 5;
+
+    v1->base.size = 0;
+    v1->base.limit = limit;
+
+    v1->data = (double*)malloc(sizeof(double)*v1->base.limit);
+
+    if (v1->data == NULL) {
+        perror("Error allocating memory for vector: ");
+        exit(EXIT_FAILURE);
+    };
+
+};
+
+void* char_init(charVector* v1, long int limit) {
+
+    if (limit <= 0) limit = 5;
+
+    v1->base.size = 0;
+    v1->base.limit = limit;
+
+    v1->data = (char*)malloc(sizeof(char)*v1->base.limit);
+
+    if (v1->data == NULL) {
+        perror("Error allocating memory for vector: ");
+        exit(EXIT_FAILURE);
+    };
+
+};
+
+void* string_init(stringVector* v1, long int limit) {
+
+    if (limit <= 0) limit = 5;
+
+    v1->base.size = 0;
+    v1->base.limit = limit;
+
+    v1->data = (char**)malloc(sizeof(char*)*v1->base.limit);
+
+    if (v1->data == NULL) {
+        perror("Error allocating memory for vector: ");
+        exit(EXIT_FAILURE);
+    };
+
+};
+
+// -------------------------------------------------------- INIT ------------------------------------------------------------------ //
+
+void* class_int_init(cintVector* v1, long int limit) {
+
+    if (limit <= 0) limit = 5;
+
+    v1->main.base.size = 0;
+    v1->main.base.limit = limit;
+
+    v1->main.data = (int*)malloc(sizeof(int)*v1->main.base.limit);
+
+    if (v1->main.data == NULL) {
+        perror("Error allocating memory for vector: ");
+        exit(EXIT_FAILURE);
+    };
+
     v1->push_back = &int_push_back;
     v1->pop_back = &int_pop_back;
     v1->at = &int_at;
@@ -1254,16 +1374,16 @@ void* int_init(intVector* v1, long int limit) {
 
 };
 
-void* float_init(floatVector* v1, long int limit) {
+void* class_float_init(cfloatVector* v1, long int limit) {
 
     if (limit <= 0) limit = 5;
 
-    v1->base.size = 0;
-    v1->base.limit = limit;
+    v1->main.base.size = 0;
+    v1->main.base.limit = limit;
 
-    v1->data = (float*)malloc(sizeof(float)*v1->base.limit);
+    v1->main.data = (float*)malloc(sizeof(float)*v1->main.base.limit);
 
-    if (v1->data == NULL) {
+    if (v1->main.data == NULL) {
         perror("Error allocating memory for vector: ");
         exit(EXIT_FAILURE);
     };
@@ -1284,16 +1404,16 @@ void* float_init(floatVector* v1, long int limit) {
 
 };
 
-void* double_init(doubleVector* v1, long int limit) {
+void* class_double_init(cdoubleVector* v1, long int limit) {
 
     if (limit <= 0) limit = 5;
 
-    v1->base.size = 0;
-    v1->base.limit = limit;
+    v1->main.base.size = 0;
+    v1->main.base.limit = limit;
 
-    v1->data = (double*)malloc(sizeof(double)*v1->base.limit);
+    v1->main.data = (double*)malloc(sizeof(double)*v1->main.base.limit);
 
-    if (v1->data == NULL) {
+    if (v1->main.data == NULL) {
         perror("Error allocating memory for vector: ");
         exit(EXIT_FAILURE);
     };
@@ -1314,16 +1434,16 @@ void* double_init(doubleVector* v1, long int limit) {
 
 };
 
-void* char_init(charVector* v1, long int limit) {
+void* class_char_init(ccharVector* v1, long int limit) {
 
     if (limit <= 0) limit = 5;
 
-    v1->base.size = 0;
-    v1->base.limit = limit;
+    v1->main.base.size = 0;
+    v1->main.base.limit = limit;
 
-    v1->data = (char*)malloc(sizeof(char)*v1->base.limit);
+    v1->main.data = (char*)malloc(sizeof(char)*v1->main.base.limit);
 
-    if (v1->data == NULL) {
+    if (v1->main.data == NULL) {
         perror("Error allocating memory for vector: ");
         exit(EXIT_FAILURE);
     };
@@ -1344,16 +1464,16 @@ void* char_init(charVector* v1, long int limit) {
 
 };
 
-void* string_init(stringVector* v1, long int limit) {
+void* class_string_init(cstringVector* v1, long int limit) {
 
     if (limit <= 0) limit = 5;
 
-    v1->base.size = 0;
-    v1->base.limit = limit;
+    v1->main.base.size = 0;
+    v1->main.base.limit = limit;
 
-    v1->data = (char**)malloc(sizeof(char*)*v1->base.limit);
+    v1->main.data = (char**)malloc(sizeof(char*)*v1->main.base.limit);
 
-    if (v1->data == NULL) {
+    if (v1->main.data == NULL) {
         perror("Error allocating memory for vector: ");
         exit(EXIT_FAILURE);
     };
