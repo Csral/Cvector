@@ -96,6 +96,10 @@ struct cintvector {
     int* (*getData)(intVector* vec);
     void (*reverse)(intVector* vec);
     long int (*find)(intVector* vec, int finder);
+    void (*shrink_to_fit)(intVector* vec, long int offset);
+    void (*resize)(intVector* vec, long int offset, int init);
+    void (*reserve)(intVector* vec, long int space);
+    long int (*capacity)(intVector* vec);
 
 };
 
@@ -115,6 +119,10 @@ struct cfloatvector {
     float* (*getData)(floatVector* vec);
     void (*reverse)(floatVector* vec);
     long int (*find)(floatVector* vec, float finder);
+    void (*shrink_to_fit)(floatVector* vec, long int offset);
+    void (*resize)(floatVector* vec, long int offset, float init);
+    void (*reserve)(intVector* vec, long int space);
+    long int (*capacity)(floatVector* vec);
 
 };
 
@@ -134,6 +142,10 @@ struct cdoublevector {
     double* (*getData)(doubleVector* vec);
     void (*reverse)(doubleVector* vec);
     long int (*find)(doubleVector* vec, double finder);
+    void (*shrink_to_fit)(doubleVector* vec, long int offset);
+    void (*resize)(doubleVector* vec, long int offset, double init);
+    void (*reserve)(intVector* vec, long int space);
+    long int (*capacity)(doubleVector* vec);
 
 };
 
@@ -153,6 +165,10 @@ struct ccharvector {
     char* (*getData)(charVector* vec);
     void (*reverse)(charVector* vec);
     long int (*find)(charVector* vec, char finder);
+    void (*shrink_to_fit)(charVector* vec, long int offset);
+    void (*resize)(charVector* vec, long int offset, char init);
+    void (*reserve)(intVector* vec, long int space);
+    long int (*capacity)(charVector* vec);
 
 };
 
@@ -172,6 +188,10 @@ struct cstringvector {
     char** (*getData)(stringVector* vec);
     void (*reverse)(stringVector* vec);
     long int (*find)(stringVector* vec, char* finder);
+    void (*shrink_to_fit)(stringVector* vec, long int offset);
+    void (*resize)(stringVector* vec, long int offset, char* init);
+    void (*reserve)(intVector* vec, long int space);
+    long int (*capacity)(stringVector* vec);
 
 };
 
@@ -228,7 +248,7 @@ void int_push_back(intVector* vec, int value) {
 
     if (vec->base.size == (vec->base.limit - 1) ) {
         
-        vec->base.limit *= 4;
+        vec->base.limit *= 2;
         vec->data = (int*)realloc(vec->data, vec->base.limit*sizeof(int));
         if (vec->data == NULL) {
             perror("Error expanding vector: ");
@@ -240,7 +260,6 @@ void int_push_back(intVector* vec, int value) {
     vec->data[vec->base.size] = value;
 
     vec->base.size += 1;
-    printf("Base size: %d\n", vec->base.size);
 
 };
 
@@ -248,7 +267,7 @@ void float_push_back(floatVector* vec, float value) {
 
     if (vec->base.size == (vec->base.limit - 1) ) {
         
-        vec->base.limit *= 4;
+        vec->base.limit *= 2;
         vec->data = (float*)realloc(vec->data, vec->base.limit*sizeof(float));
         if (vec->data == NULL) {
             perror("Error expanding vector: ");
@@ -267,7 +286,7 @@ void char_push_back(charVector* vec, char value) {
 
     if (vec->base.size == (vec->base.limit - 1) ) {
         
-        vec->base.limit *= 4;
+        vec->base.limit *= 2;
         vec->data = (char*)realloc(vec->data, vec->base.limit*sizeof(char));
         if (vec->data == NULL) {
             perror("Error expanding vector: ");
@@ -286,7 +305,7 @@ void double_push_back(doubleVector* vec, double value) {
 
     if (vec->base.size == (vec->base.limit - 1) ) {
         
-        vec->base.limit *= 4;
+        vec->base.limit *= 2;
         vec->data = (double*)realloc(vec->data, vec->base.limit*sizeof(double));
         if (vec->data == NULL) {
             perror("Error expanding vector: ");
@@ -305,7 +324,7 @@ void string_push_back(stringVector* vec, char* value) {
 
     if (vec->base.size == (vec->base.limit - 1) ) {
         
-        vec->base.limit *= 4;
+        vec->base.limit *= 2;
         vec->data = (char**)realloc(vec->data, vec->base.limit*sizeof(char*));
         if (vec->data == NULL) {
             perror("Error expanding vector: ");
@@ -1260,6 +1279,344 @@ void string_reverse(stringVector* v1) {
 
 }
 
+// --------------------------------------------------- SHRINK TO FIT ------------------------------------------------------------ //
+
+void* int_shrink_to_fit(intVector* vec, long int offset) {
+
+    if (!offset) offset = 2;
+
+    vec->data = (int*)realloc(vec->data, (vec->base.size + offset) * sizeof(int) );
+
+    if (vec->data == NULL) {
+        perror("Failed to shrink to size: ");
+        exit(EXIT_FAILURE);
+    };
+    
+    vec->base.limit = vec->base.size + offset;
+
+}
+
+void* float_shrink_to_fit(floatVector* vec, long int offset) {
+
+    if (!offset) offset = 2;
+
+    vec->data = (float*)realloc(vec->data, (vec->base.size + offset) * sizeof(float) );
+    
+    if (vec->data == NULL) {
+        perror("Failed to shrink to size: ");
+        exit(EXIT_FAILURE);
+    };
+    
+    vec->base.limit = vec->base.size + offset;
+
+}
+
+void* double_shrink_to_fit(doubleVector* vec, long int offset) {
+
+    if (!offset) offset = 2;
+
+    vec->data = (double*)realloc(vec->data, (vec->base.size + offset) * sizeof(double) );
+    
+    if (vec->data == NULL) {
+        perror("Failed to shrink to size: ");
+        exit(EXIT_FAILURE);
+    };
+    
+    vec->base.limit = vec->base.size + offset;
+
+}
+
+void* char_shrink_to_fit(charVector* vec, long int offset) {
+
+    if (!offset) offset = 2;
+
+    vec->data = (char*)realloc(vec->data, (vec->base.size + offset) * sizeof(char) );
+    
+    if (vec->data == NULL) {
+        perror("Failed to shrink to size: ");
+        exit(EXIT_FAILURE);
+    };
+    
+    vec->base.limit = vec->base.size + offset;
+
+}
+
+void* string_shrink_to_fit(stringVector* vec, long int offset) {
+
+    if (!offset) offset = 2;
+
+    vec->data = (char**)realloc(vec->data, (vec->base.size + offset) * sizeof(char**) );
+    
+    if (vec->data == NULL) {
+        perror("Failed to shrink to size: ");
+        exit(EXIT_FAILURE);
+    };
+    
+    vec->base.limit = vec->base.size + offset;
+
+}
+
+// -------------------------------------------------------- RESERVE ----------------------------------------------------------------- //
+
+void int_reserve(intVector* vec, long int space) {
+
+    if (vec->base.limit < space) {
+
+        vec->data = (int*) realloc(vec->data, space * sizeof(int) );
+
+        if (vec->data == NULL) {
+            perror("Failed to reserve space: ");
+            exit(EXIT_FAILURE);
+        };
+
+        vec->base.limit = space;
+
+    };
+
+};
+
+void float_reserve(floatVector* vec, long int space) {
+
+    if (vec->base.limit < space) {
+
+        vec->data = (float*) realloc(vec->data, space * sizeof(float) );
+
+        if (vec->data == NULL) {
+            perror("Failed to reserve space: ");
+            exit(EXIT_FAILURE);
+        };
+
+        vec->base.limit = space;
+
+    };
+
+};
+
+void double_reserve(doubleVector* vec, long int space) {
+
+    if (vec->base.limit < space) {
+
+        vec->data = (double*) realloc(vec->data, space * sizeof(double) );
+
+        if (vec->data == NULL) {
+            perror("Failed to reserve space: ");
+            exit(EXIT_FAILURE);
+        };
+
+        vec->base.limit = space;
+
+    };
+
+};
+
+void char_reserve(charVector* vec, long int space) {
+
+    if (vec->base.limit < space) {
+
+        vec->data = (char*) realloc(vec->data, space * sizeof(char) );
+
+        if (vec->data == NULL) {
+            perror("Failed to reserve space: ");
+            exit(EXIT_FAILURE);
+        };
+
+        vec->base.limit = space;
+
+    };
+
+};
+
+void string_reserve(stringVector* vec, long int space) {
+
+    if (vec->base.limit < space) {
+
+        vec->data = (char**) realloc(vec->data, space * sizeof(char*) );
+
+        if (vec->data == NULL) {
+            perror("Failed to reserve space: ");
+            exit(EXIT_FAILURE);
+        };
+
+        vec->base.limit = space;
+
+    };
+
+};
+
+// -------------------------------------------------------- RESIZE ----------------------------------------------------------------- //
+
+void int_resize(intVector* vec, long int newSize, int init) {
+
+    if (!init) init = 0;
+
+    while (newSize > vec->base.size) {
+        if (vec->base.size == (vec->base.limit - 1) ) {
+            
+            vec->base.limit *= 2;
+            vec->data = (int*)realloc(vec->data, vec->base.limit*sizeof(int));
+
+            if (vec->data == NULL) {
+                perror("Error expanding vector to resize: ");
+                exit(EXIT_FAILURE);
+            };
+
+        };
+
+        vec->data[vec->base.size] = init;
+
+        vec->base.size += 1;
+    };
+
+    vec->base.size = newSize;
+    
+    if (newSize > vec->base.limit) vec->base.limit = newSize;
+
+};
+
+void float_resize(floatVector* vec, long int newSize, float init) {
+
+    if (!init) init = 0;
+
+    while (newSize > vec->base.size) {
+        if (vec->base.size == (vec->base.limit - 1) ) {
+            
+            vec->base.limit *= 2;
+            vec->data = (float*)realloc(vec->data, vec->base.limit*sizeof(float));
+
+            if (vec->data == NULL) {
+                perror("Error expanding vector to resize: ");
+                exit(EXIT_FAILURE);
+            };
+
+        };
+
+        vec->data[vec->base.size] = init;
+
+        vec->base.size += 1;
+    };
+
+    vec->base.size = newSize;
+    
+    if (newSize > vec->base.limit) vec->base.limit = newSize;
+
+};
+
+void double_resize(doubleVector* vec, long int newSize, double init) {
+
+    if (!init) init = 0;
+
+    while (newSize > vec->base.size) {
+        if (vec->base.size == (vec->base.limit - 1) ) {
+            
+            vec->base.limit *= 2;
+            vec->data = (double*)realloc(vec->data, vec->base.limit*sizeof(double));
+
+            if (vec->data == NULL) {
+                perror("Error expanding vector to resize: ");
+                exit(EXIT_FAILURE);
+            };
+
+        };
+
+        vec->data[vec->base.size] = init;
+
+        vec->base.size += 1;
+    };
+
+    vec->base.size = newSize;
+    
+    if (newSize > vec->base.limit) vec->base.limit = newSize;
+
+};
+
+void char_resize(charVector* vec, long int newSize, char init) {
+
+    if (!init) init = 0;
+
+    while (newSize > vec->base.size) {
+        if (vec->base.size == (vec->base.limit - 1) ) {
+            
+            vec->base.limit *= 2;
+            vec->data = (char*)realloc(vec->data, vec->base.limit*sizeof(char));
+
+            if (vec->data == NULL) {
+                perror("Error expanding vector to resize: ");
+                exit(EXIT_FAILURE);
+            };
+
+        };
+
+        vec->data[vec->base.size] = init;
+
+        vec->base.size += 1;
+    };
+
+    vec->base.size = newSize;
+    
+    if (newSize > vec->base.limit) vec->base.limit = newSize;
+
+};
+
+void string_resize(stringVector* vec, long int newSize, char* init) {
+
+    if (!init) init = 0;
+
+    while (newSize > vec->base.size) {
+        if (vec->base.size == (vec->base.limit - 1) ) {
+            
+            vec->base.limit *= 2;
+            vec->data = (char**)realloc(vec->data, vec->base.limit*sizeof(char*));
+
+            if (vec->data == NULL) {
+                perror("Error expanding vector to resize: ");
+                exit(EXIT_FAILURE);
+            };
+
+        };
+
+        vec->data[vec->base.size] = init;
+
+        vec->base.size += 1;
+    };
+
+    vec->base.size = newSize;
+    
+    if (newSize > vec->base.limit) vec->base.limit = newSize;
+
+};
+
+// --------------------------------------------------------- CAPACITY --------------------------------------------------------------- //
+
+long int int_capacity(intVector* v1) {
+
+    return v1->base.limit;
+
+};
+
+long int float_capacity(floatVector* v1) {
+
+    return v1->base.limit;
+
+};
+
+long int double_capacity(doubleVector* v1) {
+
+    return v1->base.limit;
+
+};
+
+long int char_capacity(charVector* v1) {
+
+    return v1->base.limit;
+
+};
+
+long int string_capacity(stringVector* v1) {
+
+    return v1->base.limit;
+
+};
+
 // -------------------------------------------------------- INIT ------------------------------------------------------------------ //
 
 void* int_init(intVector* v1, long int limit) {
@@ -1371,6 +1728,10 @@ void* class_int_init(cintVector* v1, long int limit) {
     v1->getData = &int_data;
     v1->reverse = &int_reverse;
     v1->find = &int_find;
+    v1->shrink_to_fit = &int_shrink_to_fit;
+    v1->resize = &int_resize;
+    v1->reserve = &int_reserve;
+    v1->capacity = &int_capacity;
 
 };
 
@@ -1401,6 +1762,10 @@ void* class_float_init(cfloatVector* v1, long int limit) {
     v1->getData = &float_data;
     v1->reverse = &float_reverse;
     v1->find = &float_find;
+    v1->shrink_to_fit = &float_shrink_to_fit;
+    v1->resize = &float_resize;
+    v1->reserve = &float_reserve;
+    v1->capacity = &float_capacity;
 
 };
 
@@ -1431,6 +1796,10 @@ void* class_double_init(cdoubleVector* v1, long int limit) {
     v1->getData = &double_data;
     v1->reverse = &double_reverse;
     v1->find = &double_find;
+    v1->shrink_to_fit = &double_shrink_to_fit;
+    v1->resize = &double_resize;
+    v1->reserve = &double_reserve;
+    v1->capacity = &double_capacity;
 
 };
 
@@ -1461,6 +1830,10 @@ void* class_char_init(ccharVector* v1, long int limit) {
     v1->getData = &char_data;
     v1->reverse = &char_reverse;
     v1->find = &char_find;
+    v1->shrink_to_fit = &char_shrink_to_fit;
+    v1->resize = &char_resize;
+    v1->reserve = &char_reserve;
+    v1->capacity = &char_capacity;
 
 };
 
@@ -1491,5 +1864,9 @@ void* class_string_init(cstringVector* v1, long int limit) {
     v1->getData = &string_data;
     v1->reverse = &string_reverse;
     v1->find = &string_find;
+    v1->shrink_to_fit = &string_shrink_to_fit;
+    v1->resize = &string_resize;
+    v1->reserve = &string_reserve;
+    v1->capacity = &string_capacity;
 
 };
