@@ -34,4 +34,4 @@ due to absence of classes in C. However, the dot notations are provided using
 pointers and structures.
 
 Thus, to ensure proper usage and to reduce the confusion in usage please refer to
-the documentation [here](CVector/Getting_Started).
+the documentation [here](Getting_Started).
